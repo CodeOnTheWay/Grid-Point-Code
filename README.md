@@ -7,4 +7,4 @@
   -  GPC has unique format #xxxx-xxxx-xxx for easy recognisability.
   -  Similar GPCs are closer than different codes.
   -  Geographic Coordinates to GPC and back can be converted completely offline.
-  -  GPC library is open source and can be used without restrictions.
+  -  GPC library is an open source and can be used without restrictions.
