@@ -24,7 +24,7 @@ namespace GridPointCode
         const ulong ELEVEN = 205881132094649;   //For Uniformity
 
         // Get a Grid Point Code
-        public string GetGridPointCode(double latitude, double longitude, bool formatted = true)
+        public static string GetGridPointCode(double latitude, double longitude, bool formatted = true)
         {
             /*  Validating Latitude and Longitude values */
             if (latitude < -90 || latitude > 90)
@@ -85,7 +85,7 @@ namespace GridPointCode
         }
 
         //Get Combination Number of degrees
-        int GetCombinationNumber(string latitudeDegree, string longitudeDegree)
+        static int GetCombinationNumber(string latitudeDegree, string longitudeDegree)
         {
             int AssignedLongitude = AssignPositive(longitudeDegree);
             int AssignedLatitude = AssignPositive(latitudeDegree);
@@ -305,7 +305,7 @@ namespace GridPointCode
         }
 
         //Get Coordinates from GPC
-        public void GetCoordinates(string gridPointCode, out double latitude, out double longitude)
+        public static void GetCoordinates(string gridPointCode, out double latitude, out double longitude)
         {
             /*  Unformatting and Validating GPC  */
             string GridPointCode = UnformateNValidateGPC(gridPointCode);
@@ -384,7 +384,7 @@ namespace GridPointCode
         }
 
         //Get degrees from combination number
-        void GetDegrees(int combinationNumber, out string latitudeDegree, out string longitudeDegree)
+        static void GetDegrees(int combinationNumber, out string latitudeDegree, out string longitudeDegree)
         {
             int AssignedLongitude = 0;
             int AssignedLatitude = 0;
