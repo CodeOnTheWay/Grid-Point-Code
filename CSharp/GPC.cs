@@ -77,7 +77,7 @@ namespace GridPointCode
         }
 
         //Split Degree and Decimal Parts
-        static void SplitDegreeDecimals(double coordinate, out string degree, out string decimals)
+        void SplitDegreeDecimals(double coordinate, out string degree, out string decimals)
         {
             string[] Coordinate = coordinate.ToString("F10", CultureInfo.InvariantCulture).Split('.');
             degree = Coordinate[0];
