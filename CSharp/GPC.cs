@@ -29,11 +29,11 @@ namespace GridPointCode
             /*  Validating Latitude and Longitude values */
             if (latitude < -90 || latitude > 90)
             {
-                throw new Exception("Latitude value out of range.");
+                throw new ArgumentOutOfRangeException("latitude", latitude, "Latitude value must be between -90 to 90.");
             }
             if (longitude < -180 || longitude > 180)
             {
-                throw new Exception("Longitude value out of range.");
+                throw new ArgumentOutOfRangeException("longitude", longitude, "Longitude value must be between -180 to 180.");
             }
 
             if (latitude == -90 || latitude == 90)
@@ -323,14 +323,14 @@ namespace GridPointCode
 
             if (gridPointCode.Length != 11)
             {
-                throw new Exception("Invalid length of GPC.");
+                throw new ArgumentOutOfRangeException("gridPointCode",gridPointCode,"Length of GPC must be 11.");
             }
 
             foreach (char character in gridPointCode)
             {
                 if (!CHARACTERS.Contains(character.ToString()))
                 {
-                    throw new Exception("Invalid character in GPC");
+                    throw new ArgumentOutOfRangeException("character",character,"Invalid character in GPC.");
                 }
             }
 
