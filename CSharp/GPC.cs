@@ -57,7 +57,7 @@ namespace GridPointCode
         }
 
         //Get Point from Coordinates
-        ulong GetPointNumber(double latitude, double longitude)
+       static ulong GetPointNumber(double latitude, double longitude)
         {
             //Splitting Degree and Decimal Parts
             SplitDegreeDecimals(latitude, out string LatitudeDegree, out string LatitudeDecimals);
