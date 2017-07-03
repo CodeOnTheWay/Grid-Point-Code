@@ -77,7 +77,7 @@ namespace GridPointCode
         }
 
         //Split Degree and Decimal Parts
-        void SplitDegreeDecimals(double coordinate, out string degree, out string decimals)
+        static void SplitDegreeDecimals(double coordinate, out string degree, out string decimals)
         {
             string[] Coordinate = coordinate.ToString("F10", CultureInfo.InvariantCulture).Split('.');
             degree = Coordinate[0];
@@ -240,7 +240,7 @@ namespace GridPointCode
         }
 
         //Get Positive integer to degree
-        ushort AssignPositive(string degree)
+        static ushort AssignPositive(string degree)
         {
             int Result;
 
@@ -265,7 +265,7 @@ namespace GridPointCode
         }
 
         //Encode Point to GPC
-        string EncodePoint(ulong point)
+        static string EncodePoint(ulong point)
         {
             string Result = string.Empty;
 
@@ -288,7 +288,7 @@ namespace GridPointCode
         }
 
         //Format GPC
-        string FormateGPC(string gridPointCode)
+        static string FormateGPC(string gridPointCode)
         {
             string Result = "#";
 
@@ -318,7 +318,7 @@ namespace GridPointCode
         }
 
         //Remove formate and validate GPC
-        string UnformateNValidateGPC(string gridPointCode)
+        static string UnformateNValidateGPC(string gridPointCode)
         {
             gridPointCode = gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpper();
 
@@ -339,7 +339,7 @@ namespace GridPointCode
         }
 
         //Decode string to Point
-        ulong DecodeToPoint(string gridPointCode)
+        static ulong DecodeToPoint(string gridPointCode)
         {
             ulong Result = 0;
             ulong Base = Convert.ToUInt64(CHARACTERS.Length);
@@ -354,7 +354,7 @@ namespace GridPointCode
         }
 
         //Get a Coordinates from Point
-        void GetCoordinates(ulong point, out double latitude, out double longitude)
+        static void GetCoordinates(ulong point, out double latitude, out double longitude)
         {
             string Point = point.ToString();
 
@@ -554,7 +554,7 @@ namespace GridPointCode
         }
 
         //Get Degree from Assigned Positive Integer
-        string GetDegree(int assignedPositive)
+        static string GetDegree(int assignedPositive)
         {
             string Result;
 
