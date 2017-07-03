@@ -89,9 +89,8 @@ namespace GridPointCode
         {
             int AssignedLongitude = AssignPositive(longitudeDegree);
             int AssignedLatitude = AssignPositive(latitudeDegree);
+            
             //# of Combinations for that particular sum
-            //Sum: 0-181:sum+1 ; 182-360:182 ; 361-542:{361+182-sum)}
-            //
             int Sum = AssignedLongitude + AssignedLatitude;
             int Difference = AssignedLongitude - AssignedLatitude;
             bool IsOdd = Sum % 2 != 0;
