@@ -38,7 +38,7 @@ namespace GridPointCode
 
             if (latitude == -90 || latitude == 90)
             {
-                this.longitude = 0.00;
+                longitude = 0.00;
             }
 
             /*  Getting a Point Number  */
@@ -279,7 +279,7 @@ namespace GridPointCode
                 while (point > 0)
                 {
                     Result = CHARACTERS[Convert.ToInt32(point % Base)] + Result;
-                    this.point /= Base;
+                    point /= Base;
                 }
             }
 
@@ -319,7 +319,7 @@ namespace GridPointCode
         //Remove formate and validate GPC
         static string UnformateNValidateGPC(string gridPointCode)
         {
-            this.gridPointCode = this.gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpperInvariant();
+            gridPointCode = gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpperInvariant();
 
             if (gridPointCode.Length != 11)
             {
