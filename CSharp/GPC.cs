@@ -18,7 +18,7 @@ using System.Globalization;
 
 namespace GridPointCode
 {
-    class GPC
+    static class GPC
     {
         const string CHARACTERS = "0123456789CDFGHJKLMNPRTVWXY";   //base27
         const ulong ELEVEN = 205881132094649;   //For Uniformity
@@ -38,7 +38,7 @@ namespace GridPointCode
 
             if (latitude == -90 || latitude == 90)
             {
-                longitude = 0.00;
+                this.longitude = 0.00;
             }
 
             /*  Getting a Point Number  */
@@ -279,7 +279,7 @@ namespace GridPointCode
                 while (point > 0)
                 {
                     Result = CHARACTERS[Convert.ToInt32(point % Base)] + Result;
-                    point /= Base;
+                    this.point /= Base;
                 }
             }
 
@@ -319,7 +319,7 @@ namespace GridPointCode
         //Remove formate and validate GPC
         static string UnformateNValidateGPC(string gridPointCode)
         {
-            gridPointCode = gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpper();
+            this.gridPointCode = this.gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpperInvariant();
 
             if (gridPointCode.Length != 11)
             {
