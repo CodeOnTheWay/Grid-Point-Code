@@ -15,6 +15,7 @@
 
 using System;
 using System.Globalization;
+using System.Text;
 
 namespace GridPointCode
 {
@@ -26,23 +27,26 @@ namespace GridPointCode
         // Get a Grid Point Code
         public static string GetGridPointCode(double latitude, double longitude, bool formatted = true)
         {
+            double Latitude = latitude; //Latitude
+            double Longitude = longitude;   //Longitude
+
             /*  Validating Latitude and Longitude values */
-            if (latitude < -90 || latitude > 90)
+            if (Latitude < -90 || Latitude > 90)
             {
-                throw new ArgumentOutOfRangeException("latitude", latitude, "Latitude value must be between -90 to 90.");
+                throw new ArgumentOutOfRangeException("Latitude", Latitude, "Latitude value must be between -90 to 90.");
             }
-            if (longitude < -180 || longitude > 180)
+            if (Longitude < -180 || Longitude > 180)
             {
-                throw new ArgumentOutOfRangeException("longitude", longitude, "Longitude value must be between -180 to 180.");
+                throw new ArgumentOutOfRangeException("Longitude", Longitude, "Longitude value must be between -180 to 180.");
             }
 
-            if (latitude == -90 || latitude == 90)
+            if (Latitude == -90 || Latitude == 90)
             {
-                longitude = 0.00;
+                Longitude = 0.00;
             }
 
             /*  Getting a Point Number  */
-            ulong Point = GetPointNumber(latitude, longitude);
+            ulong Point = GetPointNumber(Latitude, Longitude);
 
             /*  Encode Point    */
             string GridPointCode = EncodePoint(Point + ELEVEN);
@@ -64,16 +68,17 @@ namespace GridPointCode
             SplitDegreeDecimals(longitude, out string LongitudeDegree, out string LongitudeDecimals);
 
             //Degree Part
-            string Result = GetCombinationNumber(LatitudeDegree, LongitudeDegree).ToString();
+            StringBuilder Result = new StringBuilder();
+            Result.Append(GetCombinationNumber(LatitudeDegree, LongitudeDegree).ToString());
 
             //Decimal Part
             for (int index = 0; index < 5; index++)
             {
-                Result += LongitudeDecimals.Substring(index, 1);
-                Result += LatitudeDecimals.Substring(index, 1);
+                Result.Append(LongitudeDecimals.Substring(index, 1));
+                Result.Append(LatitudeDecimals.Substring(index, 1));
             }
 
-            return Convert.ToUInt64(Result);
+            return Convert.ToUInt64(Result.ToString());
         }
 
         //Split Degree and Decimal Parts
@@ -266,20 +271,21 @@ namespace GridPointCode
         //Encode Point to GPC
         static string EncodePoint(ulong point)
         {
+            ulong Point = point;
             string Result = string.Empty;
 
             ulong Base = Convert.ToUInt64(CHARACTERS.Length);
 
-            if (point == 0)
+            if (Point == 0)
             {
                 Result += CHARACTERS[0];
             }
             else
             {
-                while (point > 0)
+                while (Point > 0)
                 {
-                    Result = CHARACTERS[Convert.ToInt32(point % Base)] + Result;
-                    point /= Base;
+                    Result = CHARACTERS[Convert.ToInt32(Point % Base)] + Result;
+                    Point /= Base;
                 }
             }
 
@@ -289,18 +295,19 @@ namespace GridPointCode
         //Format GPC
         static string FormateGPC(string gridPointCode)
         {
-            string Result = "#";
+            StringBuilder Result = new StringBuilder();
+            Result.Append("#");
 
             for (int index = 0; index < gridPointCode.Length; index++)
             {
                 if (index == 4 || index == 8)
                 {
-                    Result += "-";
+                    Result.Append("-");
                 }
-                Result += gridPointCode.Substring(index, 1);
+                Result.Append(gridPointCode.Substring(index, 1));
             }
 
-            return Result;
+            return Result.ToString();
         }
 
         //Get Coordinates from GPC
@@ -319,14 +326,14 @@ namespace GridPointCode
         //Remove formate and validate GPC
         static string UnformateNValidateGPC(string gridPointCode)
         {
-            gridPointCode = gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpperInvariant();
+            string GridPointCode = gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpperInvariant();
 
-            if (gridPointCode.Length != 11)
+            if (GridPointCode.Length != 11)
             {
-                throw new ArgumentOutOfRangeException("gridPointCode",gridPointCode,"Length of GPC must be 11.");
+                throw new ArgumentOutOfRangeException("GridPointCode",GridPointCode,"Length of GPC must be 11.");
             }
 
-            foreach (char character in gridPointCode)
+            foreach (char character in GridPointCode)
             {
                 if (!CHARACTERS.Contains(character.ToString()))
                 {
@@ -334,7 +341,7 @@ namespace GridPointCode
                 }
             }
 
-            return gridPointCode;
+            return GridPointCode;
         }
 
         //Decode string to Point
@@ -361,8 +368,8 @@ namespace GridPointCode
             DegreesDecimals[0] = Point.Substring(0, Point.Length - 10);   //Degree part
             DegreesDecimals[1] = Point.Substring(Point.Length - 10);  //Decimal Part
 
-            string LatitudeDecimals = string.Empty;
-            string LongitudeDecimals = string.Empty;
+            StringBuilder LatitudeDecimals = new StringBuilder();
+            StringBuilder LongitudeDecimals = new StringBuilder();
 
             GetDegrees(Convert.ToInt32(DegreesDecimals[0]), out string LatitudeDegree, out string LongitudeDegree);
 
@@ -370,16 +377,16 @@ namespace GridPointCode
             {
                 if (x % 2 == 0)
                 {
-                    LongitudeDecimals += DegreesDecimals[1].Substring(x, 1);
+                    LongitudeDecimals.Append(DegreesDecimals[1].Substring(x, 1));
                 }
                 else
                 {
-                    LatitudeDecimals += DegreesDecimals[1].Substring(x, 1);
+                    LatitudeDecimals.Append(DegreesDecimals[1].Substring(x, 1));
                 }
             }
 
-            latitude = Convert.ToDouble(LatitudeDegree + "." + LatitudeDecimals);
-            longitude = Convert.ToDouble(LongitudeDegree + "." + LongitudeDecimals);
+            latitude = Convert.ToDouble(LatitudeDegree + "." + LatitudeDecimals.ToString());
+            longitude = Convert.ToDouble(LongitudeDegree + "." + LongitudeDecimals.ToString());
         }
 
         //Get degrees from combination number
