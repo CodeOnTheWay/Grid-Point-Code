@@ -1,2 +1,5 @@
 language: csharp
 solution: GridPointCode.sln
+install:
+  - sudo apt-get install -y gtk-sharp2
+  - nuget restore GridPointCode.sln
