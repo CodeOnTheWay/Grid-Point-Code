@@ -1,4 +1,4 @@
 language: csharp
-solution: GridPointCode.sln
+solution: /CSharp/GridPointCode.sln
 install:
   - sudo apt-get update -qq
