@@ -2,4 +2,3 @@ language: csharp
 solution: GridPointCode.sln
 install:
   - sudo apt-get update -qq
-  - nuget restore GridPointCode.sln
