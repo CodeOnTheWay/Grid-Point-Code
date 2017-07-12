@@ -51,10 +51,10 @@ namespace GridPointCode
             /*  Encode Point    */
             string GridPointCode = EncodePoint(Point + ELEVEN);
 
-            /*  Formate GridPointCode   */
+            /*  Format GridPointCode   */
             if (formatted)
             {
-                GridPointCode = FormateGPC(GridPointCode);
+                GridPointCode = FormatGPC(GridPointCode);
             }
 
             return GridPointCode;
@@ -140,9 +140,7 @@ namespace GridPointCode
 
             }
 
-
             //Correcting
-
             if (Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0)
             {
                 int x = d1;
@@ -293,7 +291,7 @@ namespace GridPointCode
         }
 
         //Format GPC
-        static string FormateGPC(string gridPointCode)
+        static string FormatGPC(string gridPointCode)
         {
             StringBuilder Result = new StringBuilder();
             Result.Append("#");
@@ -314,7 +312,7 @@ namespace GridPointCode
         public static void GetCoordinates(string gridPointCode, out double latitude, out double longitude)
         {
             /*  Unformatting and Validating GPC  */
-            string GridPointCode = UnformateNValidateGPC(gridPointCode);
+            string GridPointCode = UnformatNValidateGPC(gridPointCode);
 
             /*  Getting a Point Number  */
             ulong Point = DecodeToPoint(GridPointCode) - ELEVEN;
@@ -323,8 +321,8 @@ namespace GridPointCode
             GetCoordinates(Point, out latitude, out longitude);
         }
 
-        //Remove formate and validate GPC
-        static string UnformateNValidateGPC(string gridPointCode)
+        //Remove format and validate GPC
+        static string UnformatNValidateGPC(string gridPointCode)
         {
             string GridPointCode = gridPointCode.Replace(" ", "").Replace("-", "").Replace("#", "").Trim().ToUpperInvariant();
 
