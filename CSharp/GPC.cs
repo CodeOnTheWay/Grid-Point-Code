@@ -41,7 +41,7 @@ namespace GridPointCode
             }
 
             // IGNORE ERROR : Do not check floating point equality with exact values, use a range instead.
-            //Assumming no mathematical operations are performed before on Latitude and longitude.
+            // As no mathematical operations are performed before on Latitude and Longitude.
             if (Latitude == -90 || Latitude == 90)
             {
                 Longitude = 0.00;
@@ -63,39 +63,39 @@ namespace GridPointCode
         }
 
         //Get Point from Coordinates
-       static ulong GetPointNumber(double latitude, double longitude)
+        static ulong GetPointNumber(double latitude, double longitude)
         {
             //Splitting Degree and Decimal Parts
-            SplitDegreeDecimals(latitude, out string LatitudeDegree, out string LatitudeDecimals);
-            SplitDegreeDecimals(longitude, out string LongitudeDegree, out string LongitudeDecimals);
+            SplitWholeFractional(latitude, out string LatitudeWhole, out string LatitudeFractional);
+            SplitWholeFractional(longitude, out string LongitudeWhole, out string LongitudeFractional);
 
             //Degree Part
             StringBuilder Result = new StringBuilder();
-            Result.Append(GetCombinationNumber(LatitudeDegree, LongitudeDegree).ToString());
+            Result.Append(GetCombinationNumber(LatitudeWhole, LongitudeWhole).ToString());
 
             //Decimal Part
             for (int index = 0; index < 5; index++)
             {
-                Result.Append(LongitudeDecimals.Substring(index, 1));
-                Result.Append(LatitudeDecimals.Substring(index, 1));
+                Result.Append(LongitudeFractional.Substring(index, 1));
+                Result.Append(LatitudeFractional.Substring(index, 1));
             }
 
             return Convert.ToUInt64(Result.ToString());
         }
 
         //Split Degree and Decimal Parts
-        static void SplitDegreeDecimals(double coordinate, out string degree, out string decimals)
+        static void SplitWholeFractional(double coordinate, out string whole, out string fractional)
         {
             string[] Coordinate = coordinate.ToString("F10", CultureInfo.InvariantCulture).Split('.');
-            degree = Coordinate[0];
-            decimals = Coordinate[1];
+            whole = Coordinate[0];
+            fractional = Coordinate[1];
         }
 
         //Get Combination Number of degrees
-        static int GetCombinationNumber(string latitudeDegree, string longitudeDegree)
+        static int GetCombinationNumber(string latitudeWhole, string longitudeWhole)
         {
-            int AssignedLongitude = AssignPositive(longitudeDegree);
-            int AssignedLatitude = AssignPositive(latitudeDegree);
+            int AssignedLongitude = AssignPositive(longitudeWhole);
+            int AssignedLatitude = AssignPositive(latitudeWhole);
             
             //# of Combinations for that particular sum
             int Sum = AssignedLongitude + AssignedLatitude;
@@ -243,26 +243,24 @@ namespace GridPointCode
             return dCombi;
         }
 
-        //Get Positive integer to degree
-        static ushort AssignPositive(string degree)
+        //Get Positive integer to Whole-Number
+        static ushort AssignPositive(string whole)
         {
             int Result;
 
             // If Zero
-            if (degree == "0")
+            if (whole == "0")
             {
                 Result = 0;
-
             }
-            else if (degree == "-0")
+            else if (whole == "-0")
             {
                 Result = 1;
-
             }
             else
             {
-                short Degree = Convert.ToInt16(degree);
-                Result = (Math.Abs(Degree) * 2) + (Degree < 0 ? 1 : 0);
+                short WholeNumber = Convert.ToInt16(whole);
+                Result = (Math.Abs(WholeNumber) * 2) + (WholeNumber < 0 ? 1 : 0);
             }
 
             return Convert.ToUInt16(Result);
@@ -364,33 +362,33 @@ namespace GridPointCode
         {
             string Point = point.ToString();
 
-            string[] DegreesDecimals = new string[2];
-            DegreesDecimals[0] = Point.Substring(0, Point.Length - 10);   //Degree part
-            DegreesDecimals[1] = Point.Substring(Point.Length - 10);  //Decimal Part
+            string[] WholeFractional = new string[2];
+            WholeFractional[0] = Point.Substring(0, Point.Length - 10);   //Whole-Number part
+            WholeFractional[1] = Point.Substring(Point.Length - 10);  //Fractional Part
 
-            StringBuilder LatitudeDecimals = new StringBuilder();
-            StringBuilder LongitudeDecimals = new StringBuilder();
+            StringBuilder LatitudeFractional = new StringBuilder();
+            StringBuilder LongitudeFractional = new StringBuilder();
 
-            GetDegrees(Convert.ToInt32(DegreesDecimals[0]), out string LatitudeDegree, out string LongitudeDegree);
+            GetWholesFromCombination(Convert.ToInt32(WholeFractional[0]), out string LatitudeWhole, out string LongitudeWhole);
 
-            for (int x = 0; x < DegreesDecimals[1].Length; x++)
+            for (int x = 0; x < WholeFractional[1].Length; x++)
             {
                 if (x % 2 == 0)
                 {
-                    LongitudeDecimals.Append(DegreesDecimals[1].Substring(x, 1));
+                    LongitudeFractional.Append(WholeFractional[1].Substring(x, 1));
                 }
                 else
                 {
-                    LatitudeDecimals.Append(DegreesDecimals[1].Substring(x, 1));
+                    LatitudeFractional.Append(WholeFractional[1].Substring(x, 1));
                 }
             }
 
-            latitude = Convert.ToDouble(LatitudeDegree + "." + LatitudeDecimals.ToString());
-            longitude = Convert.ToDouble(LongitudeDegree + "." + LongitudeDecimals.ToString());
+            latitude = Convert.ToDouble(LatitudeWhole + "." + LatitudeFractional.ToString());
+            longitude = Convert.ToDouble(LongitudeWhole + "." + LongitudeFractional.ToString());
         }
 
-        //Get degrees from combination number
-        static void GetDegrees(int combinationNumber, out string latitudeDegree, out string longitudeDegree)
+        //Get Assigned Positive Integers from Combination number
+        static void GetWholesFromCombination(int combinationNumber, out string latitudeWhole, out string longitudeWhole)
         {
             int AssignedLongitude = 0;
             int AssignedLatitude = 0;
@@ -555,12 +553,12 @@ namespace GridPointCode
                 }
             }
             //
-            longitudeDegree = GetDegree(AssignedLongitude);
-            latitudeDegree = GetDegree(AssignedLatitude);
+            longitudeWhole = GetWholeNumber(AssignedLongitude);
+            latitudeWhole = GetWholeNumber(AssignedLatitude);
         }
 
         //Get Degree from Assigned Positive Integer
-        static string GetDegree(int assignedPositive)
+        static string GetWholeNumber(int assignedPositive)
         {
             string Result;
 
