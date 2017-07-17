@@ -40,6 +40,8 @@ namespace GridPointCode
                 throw new ArgumentOutOfRangeException("Longitude", Longitude, "Longitude value must be between -180 to 180.");
             }
 
+            // IGNORE ERROR : Do not check floating point equality with exact values, use a range instead.
+            //Assumming no mathematical operations are performed before on Latitude and longitude.
             if (Latitude == -90 || Latitude == 90)
             {
                 Longitude = 0.00;
