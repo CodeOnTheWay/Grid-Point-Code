@@ -24,7 +24,9 @@ namespace GridPointCode
         const string CHARACTERS = "0123456789CDFGHJKLMNPRTVWXY";   //base27
         const ulong ELEVEN = 205881132094649;   //For Uniformity
 
-        // Get a Grid Point Code
+                            /*  PART 1 : ENCODE */
+
+        //Get a Grid Point Code
         public static string GetGridPointCode(double latitude, double longitude, bool formatted = true)
         {
             double Latitude = latitude; //Latitude
@@ -65,15 +67,15 @@ namespace GridPointCode
         //Get Point from Coordinates
         static ulong GetPointNumber(double latitude, double longitude)
         {
-            //Splitting Degree and Decimal Parts
+            //Splitting Whole-Number and Fractional Parts
             SplitWholeFractional(latitude, out string LatitudeWhole, out string LatitudeFractional);
             SplitWholeFractional(longitude, out string LongitudeWhole, out string LongitudeFractional);
 
-            //Degree Part
+            //Whole-Number Part
             StringBuilder Result = new StringBuilder();
             Result.Append(GetCombinationNumber(LatitudeWhole, LongitudeWhole).ToString());
 
-            //Decimal Part
+            //Fractional Part
             for (int index = 0; index < 5; index++)
             {
                 Result.Append(LongitudeFractional.Substring(index, 1));
@@ -83,7 +85,7 @@ namespace GridPointCode
             return Convert.ToUInt64(Result.ToString());
         }
 
-        //Split Degree and Decimal Parts
+        //Split Whole-Number and Fractonal Parts
         static void SplitWholeFractional(double coordinate, out string whole, out string fractional)
         {
             string[] Coordinate = coordinate.ToString("F10", CultureInfo.InvariantCulture).Split('.');
@@ -91,7 +93,7 @@ namespace GridPointCode
             fractional = Coordinate[1];
         }
 
-        //Get Combination Number of degrees
+        //Get Combination Number of Whole-Numbers
         static int GetCombinationNumber(string latitudeWhole, string longitudeWhole)
         {
             int AssignedLongitude = AssignPositive(longitudeWhole);
@@ -308,6 +310,8 @@ namespace GridPointCode
             return Result.ToString();
         }
 
+                            /*  PART 2 : DECODE */
+
         //Get Coordinates from GPC
         public static void GetCoordinates(string gridPointCode, out double latitude, out double longitude)
         {
@@ -387,7 +391,7 @@ namespace GridPointCode
             longitude = Convert.ToDouble(LongitudeWhole + "." + LongitudeFractional.ToString());
         }
 
-        //Get Assigned Positive Integers from Combination number
+        //Get Whole-Numbers from Combination number
         static void GetWholesFromCombination(int combinationNumber, out string latitudeWhole, out string longitudeWhole)
         {
             int AssignedLongitude = 0;
@@ -557,7 +561,7 @@ namespace GridPointCode
             latitudeWhole = GetWholeNumber(AssignedLatitude);
         }
 
-        //Get Degree from Assigned Positive Integer
+        //Get Whole-Number from Assigned Positive Integer
         static string GetWholeNumber(int assignedPositive)
         {
             string Result;
