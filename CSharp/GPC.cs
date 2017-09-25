@@ -93,9 +93,14 @@ namespace GridPointCode
             Result[1] = (int)Math.Truncate(Math.Abs(coordinate));
 
             //Fractional
+            decimal AbsCoordinate = (decimal)Math.Abs(coordinate);
+            decimal Fractional = AbsCoordinate - (int)Math.Truncate(AbsCoordinate);
+            decimal Power10;
             for (int x = 1; x <= 5; x++)
             {
-                Result[x+1] = (int)(Math.Abs(coordinate) * Math.Pow(10, x)) % 10;
+                Power10 = Fractional * 10;
+                Result[x + 1] = (int)Math.Truncate(Power10);
+                Fractional = Power10 - Result[x + 1];
             }
 
             return Result;
