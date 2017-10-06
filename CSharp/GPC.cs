@@ -17,7 +17,7 @@ using System;
 
 namespace GridPointCode
 {
-    static class GPC
+    public static class GPC
     {
         const string CHARACTERS = "0123456789CDFGHJKLMNPRTVWXY";   //base27
         const ulong ELEVEN = 205881132094649;   //For Uniformity
