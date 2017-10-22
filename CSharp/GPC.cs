@@ -22,10 +22,53 @@ namespace GridPointCode
         const string CHARACTERS = "0123456789CDFGHJKLMNPRTVWXY";   //base27
         const ulong ELEVEN = 205881132094649;   //For Uniformity
 
+        public struct Coordinates
+        {
+            public double Latitude;
+            public double Longitude;
+
+            public Coordinates(double latitude, double longitude)
+            {
+                Latitude = latitude;
+                Longitude = longitude;
+            }
+        };
+
+        struct CoordinateSeven
+        {
+            public int[] LatitudeSeven;
+            public int[] LongitudeSeven;
+            public CoordinateSeven(int[] latitudeSeven, int[] longitudeSeven)
+            {
+                LatitudeSeven = latitudeSeven;
+                LongitudeSeven = longitudeSeven;
+            }
+        };
+
+        struct CoordinateSignWhole
+        {
+            public int LatitudeSign;
+            public int LatitudeWhole;
+            public int LongitudeSign;
+            public int LongitudeWhole;
+            public CoordinateSignWhole(int latitudeSign,int latitudeWhole, int longitudeSign, int longitudeWhole)
+            {
+                LatitudeSign = latitudeSign;
+                LatitudeWhole = latitudeWhole;
+                LongitudeSign = longitudeSign;
+                LongitudeWhole = longitudeWhole;
+            }
+        };
+
                             /*  PART 1 : ENCODE */
 
         //Get a Grid Point Code
-        public static string GetGridPointCode(double latitude, double longitude, bool formatted = true)
+        public static string GetGridPointCode(double latitude, double longitude)
+        {
+            return GetGridPointCode(latitude, longitude, true);
+        }
+
+        public static string GetGridPointCode(double latitude, double longitude, bool formatted)
         {
             double Latitude = latitude; //Latitude
             double Longitude = longitude;   //Longitude
@@ -67,9 +110,10 @@ namespace GridPointCode
         {
             int[] LatitudeSeven = GetCoordinateSeven(latitude);
             int[] LongitudeSeven = GetCoordinateSeven(longitude);
-            
+
             //Whole-Number Part
-            ulong Point = (ulong)(Math.Pow(10,10) * GetCombinationNumber(LatitudeSeven[0],LatitudeSeven[1],LongitudeSeven[0],LongitudeSeven[1]));
+            CoordinateSignWhole SignWhole = new CoordinateSignWhole(LatitudeSeven[0], LatitudeSeven[1], LongitudeSeven[0], LongitudeSeven[1]);
+            ulong Point = (ulong)(Math.Pow(10,10) * GetCombinationNumber(SignWhole));
 
             //Fractional Part
             int Power = 9;
@@ -107,10 +151,10 @@ namespace GridPointCode
         }
 
         //Get Combination Number of Whole-Numbers
-        static int GetCombinationNumber(int latitudeSign, int latitudeWhole, int longitudeSign, int longitudeWhole)
+        static int GetCombinationNumber(CoordinateSignWhole signWhole)
         {
-            int AssignedLongitude = (longitudeWhole * 2) + (longitudeSign == -1 ? 1 : 0);
-            int AssignedLatitude = (latitudeWhole * 2) + (latitudeSign == -1 ? 1 : 0);
+            int AssignedLongitude = (signWhole.LongitudeWhole * 2) + (signWhole.LongitudeSign == -1 ? 1 : 0);
+            int AssignedLatitude = (signWhole.LatitudeWhole * 2) + (signWhole.LatitudeSign == -1 ? 1 : 0);
 
             //# of Combinations for that particular sum
             int Sum = AssignedLongitude + AssignedLatitude;
@@ -302,7 +346,7 @@ namespace GridPointCode
                             /*  PART 2 : DECODE */
 
         //Get Coordinates from GPC
-        public static void GetCoordinates(string gridPointCode, out double latitude, out double longitude)
+        public static Coordinates GetCoordinates(string gridPointCode)
         {
             /*  Unformatting and Validating GPC  */
             string GridPointCode = UnformatNValidateGPC(gridPointCode);
@@ -311,7 +355,7 @@ namespace GridPointCode
             ulong Point = DecodeToPoint(GridPointCode) - ELEVEN;
 
             /* Getting Coordinates from Point  */
-            GetCoordinates(Point, out latitude, out longitude);
+            return GetCoordinates(Point);
         }
 
         //Remove format and validate GPC
@@ -351,45 +395,43 @@ namespace GridPointCode
         }
 
         //Get a Coordinates from Point
-        static void GetCoordinates(ulong point, out double latitude, out double longitude)
+        static Coordinates GetCoordinates(ulong point)
         {
             int Combination = (int)Math.Truncate((point / Math.Pow(10, 10)));
             ulong Fractional = (ulong)(point - (Combination * Math.Pow(10, 10)));
 
-            GetCoordinateSeven(Combination, Fractional, out int[] LongitudeSeven, out int[] LatitudeSeven);
-
-            GetCoordinates(LongitudeSeven, LatitudeSeven, out double Longitude, out double Latitude);
-
-            latitude = Latitude;
-            longitude = Longitude;
+            return GetCoordinates(GetCoordinateSeven(Combination, Fractional));
         }
 
         //Combine Seven Parts to Coordinate
-        private static void GetCoordinates(int[] longitudeSeven, int[] latitudeSeven, out double longitude, out double latitude)
+        static Coordinates GetCoordinates(CoordinateSeven CSeven)
         {
             int Power = 0;
             int TempLatitude = 0;
             int TempLongitude = 0;
             for (int x = 6; x >= 1; x--)
             {
-                TempLatitude += (int)(latitudeSeven[x] * Math.Pow(10, Power));
-                TempLongitude += (int)(longitudeSeven[x] * Math.Pow(10, Power++));
+                TempLatitude += (int)(CSeven.LatitudeSeven[x] * Math.Pow(10, Power));
+                TempLongitude += (int)(CSeven.LongitudeSeven[x] * Math.Pow(10, Power++));
             }
 
-            double Latitude = (TempLatitude / Math.Pow(10, 5)) * latitudeSeven[0];
-            double Longitude = (TempLongitude / Math.Pow(10, 5)) * longitudeSeven[0];
+            double Latitude = (TempLatitude / Math.Pow(10, 5)) * CSeven.LatitudeSeven[0];
+            double Longitude = (TempLongitude / Math.Pow(10, 5)) * CSeven.LongitudeSeven[0];
 
-            latitude = Latitude;
-            longitude = Longitude;
+            return new Coordinates(Latitude, Longitude);
         }
 
         //Get Seven Parts of Coordinate
-        private static void GetCoordinateSeven(int combination, ulong fractional, out int[] longitudeSeven, out int[] latitudeSeven)
+        static CoordinateSeven GetCoordinateSeven(int combination, ulong fractional)
         {
             int[] LongitudeSeven = new int[7];
             int[] LatitudeSeven = new int[7];
 
-            GetWholesFromCombination(combination, out LatitudeSeven[0], out LatitudeSeven[1], out LongitudeSeven[0], out LongitudeSeven[1]);
+            CoordinateSignWhole SignWhole = GetWholesFromCombination(combination);
+            LongitudeSeven[0] = SignWhole.LongitudeSign;
+            LongitudeSeven[1] = SignWhole.LongitudeWhole;
+            LatitudeSeven[0] = SignWhole.LatitudeSign;
+            LatitudeSeven[1] = SignWhole.LatitudeWhole;
 
             int Power = 9;
             for (int x = 2; x <= 6; x++)
@@ -398,12 +440,11 @@ namespace GridPointCode
                 LatitudeSeven[x] = (int)(((ulong)(Math.Truncate(fractional / Math.Pow(10, Power--)))) % 10);
             }
 
-            longitudeSeven = LongitudeSeven;
-            latitudeSeven = LatitudeSeven;
+            return new CoordinateSeven(LatitudeSeven, LongitudeSeven);
         }
 
         //Get Whole-Numbers from Combination number
-        static void GetWholesFromCombination(int combinationNumber, out int latitudeSign, out int latitudeWhole, out int longitudeSign, out int longitudeWhole)
+        static CoordinateSignWhole GetWholesFromCombination(int combinationNumber)
         {
             int AssignedLongitude = 0;
             int AssignedLatitude = 0;
@@ -567,10 +608,12 @@ namespace GridPointCode
                 }
             }
             //
-            longitudeSign = (AssignedLongitude % 2 != 0 ? -1 : 1);
-            longitudeWhole = (longitudeSign == -1 ? (--AssignedLongitude / 2)  : (AssignedLongitude / 2));
-            latitudeSign = (AssignedLatitude % 2 != 0 ? -1 : 1);
-            latitudeWhole = (latitudeSign == -1 ? (--AssignedLatitude / 2) : (AssignedLatitude / 2));
+            CoordinateSignWhole Result = new CoordinateSignWhole();
+            Result.LongitudeSign = (AssignedLongitude % 2 != 0 ? -1 : 1);
+            Result.LongitudeWhole = (Result.LongitudeSign == -1 ? (--AssignedLongitude / 2) : (AssignedLongitude / 2));
+            Result.LatitudeSign = (AssignedLatitude % 2 != 0 ? -1 : 1);
+            Result.LatitudeWhole = (Result.LatitudeSign == -1 ? (--AssignedLatitude / 2) : (AssignedLatitude / 2));
+            return Result;
         }
 
     }
