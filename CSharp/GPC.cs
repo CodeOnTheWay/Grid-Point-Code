@@ -24,8 +24,8 @@ namespace GridPointCode
 
         public struct Coordinates
         {
-            public double Latitude;
-            public double Longitude;
+            public readonly double Latitude;
+            public readonly double Longitude;
 
             public Coordinates(double latitude, double longitude)
             {
