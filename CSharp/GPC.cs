@@ -22,7 +22,7 @@ namespace GridPointCode
         const string CHARACTERS = "0123456789CDFGHJKLMNPRTVWXY";   //base27
         const ulong ELEVEN = 205881132094649;   //For Uniformity
 
-        public struct Coordinates
+        public struct Coordinates : IEquatable<Coordinates>
         {
             public readonly double Latitude;
             public readonly double Longitude;
@@ -32,31 +32,171 @@ namespace GridPointCode
                 Latitude = latitude;
                 Longitude = longitude;
             }
+
+            public bool Equals(Coordinates other)
+            {
+                if(this.Latitude == other.Latitude && this.Longitude == other.Longitude)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            public override bool Equals(Object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+                Coordinates Coords = (Coordinates)obj;
+                return Equals(Coords);
+            }
+
+            public override int GetHashCode()
+            {
+                return (this.Latitude.ToString() + this.Longitude.ToString()).GetHashCode();
+            }
+
+            public static bool operator == (Coordinates coordinates1, Coordinates coordinates2)
+            {
+                if (((object)coordinates1) == null || ((object)coordinates2) == null)
+                {
+                    return Object.Equals(coordinates1, coordinates2);
+                }
+                return coordinates1.Equals(coordinates2);
+            }
+
+            public static bool operator != (Coordinates coordinate1, Coordinates coordinate2)
+            {
+                if (((object)coordinate1) == null || ((object)coordinate2) == null)
+                {
+                    return !Object.Equals(coordinate1, coordinate2);
+                }
+                return !(coordinate1.Equals(coordinate2));
+            }
+
         };
 
-        struct CoordinateSeven
+        struct CoordinateSeven : IEquatable<CoordinateSeven>
         {
             public int[] LatitudeSeven;
             public int[] LongitudeSeven;
+
             public CoordinateSeven(int[] latitudeSeven, int[] longitudeSeven)
             {
                 LatitudeSeven = latitudeSeven;
                 LongitudeSeven = longitudeSeven;
             }
+
+            public bool Equals(CoordinateSeven other)
+            {
+                if (this.LatitudeSeven == other.LatitudeSeven && this.LongitudeSeven == other.LongitudeSeven)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            public override bool Equals(Object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+                CoordinateSeven CoordsSeven = (CoordinateSeven)obj;
+                return Equals(CoordsSeven);
+            }
+
+            public override int GetHashCode()
+            {
+                return (this.LatitudeSeven.GetHashCode().ToString() + this.LongitudeSeven.GetHashCode().ToString()).GetHashCode();
+            }
+
+            public static bool operator == (CoordinateSeven coordSeven1, CoordinateSeven coordSeven2)
+            {
+                if (((object)coordSeven1) == null || ((object)coordSeven2) == null)
+                {
+                    return Object.Equals(coordSeven1, coordSeven2);
+                }
+                return coordSeven1.Equals(coordSeven2);
+            }
+
+            public static bool operator !=(CoordinateSeven coordSeven1, CoordinateSeven coordSeven2)
+            {
+                if (((object)coordSeven1) == null || ((object)coordSeven2) == null)
+                {
+                    return !Object.Equals(coordSeven1, coordSeven2);
+                }
+                return !(coordSeven1.Equals(coordSeven2));
+            }
         };
 
-        struct CoordinateSignWhole
+        struct CoordinateSignWhole : IEquatable<CoordinateSignWhole>
         {
             public int LatitudeSign;
             public int LatitudeWhole;
             public int LongitudeSign;
             public int LongitudeWhole;
+
             public CoordinateSignWhole(int latitudeSign,int latitudeWhole, int longitudeSign, int longitudeWhole)
             {
                 LatitudeSign = latitudeSign;
                 LatitudeWhole = latitudeWhole;
                 LongitudeSign = longitudeSign;
                 LongitudeWhole = longitudeWhole;
+            }
+
+            public bool Equals(CoordinateSignWhole other)
+            {
+                if (this.LatitudeSign == other.LatitudeSign && this.LatitudeWhole == other.LatitudeWhole 
+                    && this.LongitudeSign == other.LongitudeSign && this.LongitudeWhole == other.LongitudeWhole)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            public override bool Equals(Object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+                CoordinateSignWhole CoordSignWhole = (CoordinateSignWhole)obj;
+                return Equals(CoordSignWhole);
+            }
+
+            public override int GetHashCode()
+            {
+                return (this.LatitudeSign.ToString() + this.LatitudeWhole.ToString() +
+                    this.LongitudeSign.ToString() + this.LongitudeWhole.ToString()).GetHashCode();
+            }
+
+            public static bool operator == (CoordinateSignWhole CoordSignWhole1, CoordinateSignWhole CoordSignWhole2)
+            {
+                if (((object)CoordSignWhole1) == null || ((object)CoordSignWhole2) == null)
+                {
+                    return Object.Equals(CoordSignWhole1, CoordSignWhole2);
+                }
+                return CoordSignWhole1.Equals(CoordSignWhole2);
+            }
+
+            public static bool operator != (CoordinateSignWhole CoordSignWhole1, CoordinateSignWhole CoordSignWhole2)
+            {
+                if (((object)CoordSignWhole1) == null || ((object)CoordSignWhole2) == null)
+                {
+                    return !Object.Equals(CoordSignWhole1, CoordSignWhole2);
+                }
+                return !(CoordSignWhole1.Equals(CoordSignWhole2));
             }
         };
 
