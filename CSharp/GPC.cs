@@ -160,145 +160,66 @@ namespace GridPointCode
             int Difference = AssignedLongitude - AssignedLatitude;
             bool IsOdd = Sum % 2 != 0;
 
-            int D1 = 0;
-            int D2 = 0;
-            int DCombi = 0;
+            int ALongitude = 0;
+            int ALatitude = 0;
+            int ACombination = 0;
 
             if (Sum <= 181)
             {
-                D1 = (IsOdd ? ((Sum - 1) / 2) + 1 : Sum / 2);
-                D2 = (IsOdd ? ((Sum - 1) / 2) : Sum / 2);
+                ALongitude = (IsOdd ? ((Sum - 1) / 2) + 1 : Sum / 2);
+                ALatitude = (IsOdd ? ((Sum - 1) / 2) : Sum / 2);
 
                 for (int x = Sum - 1; x >= 0; x--)
                 {
-                    DCombi += x + 1;
+                    ACombination += x + 1;
                 }
 
-                DCombi += (IsOdd ? ((Sum + 1) / 2) + 1 : (Sum / 2) + 1);
+                ACombination += (IsOdd ? ((Sum + 1) / 2) + 1 : (Sum / 2) + 1);
 
             }
             else if (Sum <= 360)
             {
-                DCombi += 16653;
-                D1 = Sum - 181;
-                D2 = 181;
+                ACombination += 16653;
+                ALongitude = Sum - 181;
+                ALatitude = 181;
                 for (int x = Sum - 1; x >= 182; x--)
                 {
-                    DCombi += 182;
+                    ACombination += 182;
                 }
-                DCombi++;
+                ACombination++;
             }
             else if (Sum <= 542)
             {
-                DCombi += 49231;
-                D1 = 361;
-                D2 = Sum - 361;
+                ACombination += 49231;
+                ALongitude = 361;
+                ALatitude = Sum - 361;
                 for (int x = Sum; x >= 361; x--)
                 {
-                    DCombi += (543 - x);
+                    ACombination += (543 - x);
                 }
 
             }
 
             //Correcting
-            if (Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
+            bool BlockOne = ((Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0) || Sum >= 361);
 
-                while (true)
+            while (ALongitude != AssignedLongitude)
+            {
+                if(BlockOne)
                 {
-                    X--;
-                    Y++;
-                    Z--;
-                    if ((X + Y) != Sum)
-                    {
-                        DCombi = 66000; //
-                        break;
-                    }
-                    if (X == AssignedLongitude)
-                    {
-                        DCombi = Z;
-                        break;
-                    }
+                    ALongitude--;
+                    ALatitude++;
+                    ACombination--;
                 }
-            }
-            else if (Sum > 0 && Sum <= 181 && Math.Sign(Difference) >= 0)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-
-                while (true)
+                else  //((Sum > 0 && Sum <= 181 && Math.Sign(Difference) >= 0) || (Sum >= 182 && Sum <= 360))
                 {
-
-                    if ((X + Y) != Sum)
-                    {
-                        DCombi = 66000; //
-                        break;
-                    }
-                    if (X == AssignedLongitude)
-                    {
-                        DCombi = Z;
-                        break;
-                    }
-                    X++;
-                    Y--;
-                    Z++;
-                }
-            }
-            ////
-            if (Sum >= 182 && Sum <= 360)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-
-                while (true)
-                {
-
-                    if ((X + Y) != Sum)
-                    {
-                        DCombi = 66000; //
-                        break;
-                    }
-                    if (X == AssignedLongitude)
-                    {
-                        DCombi = Z;
-                        break;
-                    }
-                    X++;
-                    Y--;
-                    Z++;
-                }
-            }
-            ////
-            if (Sum >= 361)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-                while (true)
-                {
-
-                    if ((X + Y) != Sum)
-                    {
-                        DCombi = 66000; //
-                        break;
-                    }
-                    if (X == AssignedLongitude)
-                    {
-                        DCombi = Z;
-                        break;
-                    }
-                    X--;
-                    Y++;
-                    Z--;
+                    ALongitude++;
+                    ALatitude--;
+                    ACombination++;
                 }
             }
 
-            return DCombi;
+            return ACombination;
         }
 
         //Encode Point to GPC
@@ -445,8 +366,6 @@ namespace GridPointCode
         //Get Whole-Numbers from Combination number
         static CoordinateSignWhole GetWholesFromCombination(int combinationNumber)
         {
-            int AssignedLongitude = 0;
-            int AssignedLatitude = 0;
             int CombinationRange = 0;
             int Sum = 0;
 
@@ -471,142 +390,59 @@ namespace GridPointCode
                     break;
                 }
             }
+            
             ////
-            int Difference = 0;
             bool IsOdd = Sum % 2 != 0;
-
-            int D1 = 0;
-            int D2 = 0;
-            int DCombi = CombinationRange;
+            int ALongitude = 0;
+            int ALatitude = 0;
+            int ACombination = CombinationRange;
 
             if (Sum <= 181)
             {
-                D1 = (IsOdd ? ((Sum - 1) / 2) + 1 : Sum / 2);
-                D2 = (IsOdd ? ((Sum - 1) / 2) : Sum / 2);
+                ALongitude = (IsOdd ? ((Sum - 1) / 2) + 1 : Sum / 2);
+                ALatitude = (IsOdd ? ((Sum - 1) / 2) : Sum / 2);
 
-                DCombi -= Sum + 1;
+                ACombination -= Sum + 1;
 
-                DCombi += (IsOdd ? ((Sum + 1) / 2) + 1 : (Sum / 2) + 1);
+                ACombination += (IsOdd ? ((Sum + 1) / 2) + 1 : (Sum / 2) + 1);
             }
             else if (Sum <= 360)
             {
-                D1 = Sum - 181;
-                D2 = 181;
+                ALongitude = Sum - 181;
+                ALatitude = 181;
 
-                DCombi -= 182;
+                ACombination -= 182;
 
-                DCombi++;
+                ACombination++;
             }
             else if (Sum <= 542)
             {
-                D1 = 361;
-                D2 = Sum - 361;
+                ALongitude = 361;
+                ALatitude = Sum - 361;
             }
 
             ////=>Correcting
-            Difference = combinationNumber - DCombi;
-            if (Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0)
+            int Difference = combinationNumber - ACombination;
+            bool BlockOne = ((Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0) || (Sum >= 361));
+            while (ACombination != combinationNumber)
             {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-
-                while (true)
+                if(BlockOne)
                 {
-                    X--;
-                    Y++;
-                    Z--;
-                    if ((X + Y) != Sum)
-                    {
-                        AssignedLongitude = 999;
-                        AssignedLatitude = 999;
-                        break;
-                    }
-                    if (Z == combinationNumber)
-                    {
-                        AssignedLongitude = X;
-                        AssignedLatitude = Y;
-                        break;
-                    }
+                    ALongitude--;
+                    ALatitude++;
+                    ACombination--;
                 }
-            }
-            else if (Sum > 0 && Sum <= 181 && Math.Sign(Difference) >= 0)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-
-                while (true)
+                else    //(Sum > 0 && Sum <= 181 && Math.Sign(Difference) >= 0) || (Sum >= 182 && Sum <= 360)
                 {
-                    if ((X + Y) != Sum)
-                    {
-                        AssignedLongitude = 999;
-                        AssignedLatitude = 999;
-                        break;
-                    }
-                    if (Z == combinationNumber)
-                    {
-                        AssignedLongitude = X;
-                        AssignedLatitude = Y;
-                        break;
-                    }
-                    X++;
-                    Y--;
-                    Z++;
+                    ALongitude++;
+                    ALatitude--;
+                    ACombination++;
                 }
-            }
-            ////
-            if (Sum >= 182 && Sum <= 360)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-
-                while (true)
-                {
-                    if ((X + Y) != Sum)
-                    {
-                        AssignedLongitude = 999;
-                        AssignedLatitude = 999;
-                        break;
-                    }
-                    if (Z == combinationNumber)
-                    {
-                        AssignedLongitude = X;
-                        AssignedLatitude = Y;
-                        break;
-                    }
-                    X++;
-                    Y--;
-                    Z++;
-                }
-            }
-            ////
-            if (Sum >= 361)
-            {
-                int X = D1;
-                int Y = D2;
-                int Z = DCombi;
-                while (true)
-                {
-                    if ((X + Y) != Sum)
-                    {
-                        AssignedLongitude = 999;
-                        AssignedLatitude = 999;
-                        break;
-                    }
-                    if (Z == combinationNumber)
-                    {
-                        AssignedLongitude = X;
-                        AssignedLatitude = Y;
-                        break;
-                    }
-                    X--;
-                    Y++;
-                    Z--;
-                }
+                
             }
             //
+            int AssignedLongitude = ALongitude;
+            int AssignedLatitude = ALatitude;
             CoordinateSignWhole Result = new CoordinateSignWhole();
             Result.LongitudeSign = (AssignedLongitude % 2 != 0 ? -1 : 1);
             Result.LongitudeWhole = (Result.LongitudeSign == -1 ? (--AssignedLongitude / 2) : (AssignedLongitude / 2));
