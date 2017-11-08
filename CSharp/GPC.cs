@@ -211,7 +211,7 @@ namespace GridPointCode
                     ALatitude++;
                     ACombination--;
                 }
-                else  //((Sum > 0 && Sum <= 181 && Math.Sign(Difference) >= 0) || (Sum >= 182 && Sum <= 360))
+                else
                 {
                     ALongitude++;
                     ALatitude--;
@@ -432,7 +432,7 @@ namespace GridPointCode
                     ALatitude++;
                     ACombination--;
                 }
-                else    //(Sum > 0 && Sum <= 181 && Math.Sign(Difference) >= 0) || (Sum >= 182 && Sum <= 360)
+                else
                 {
                     ALongitude++;
                     ALatitude--;
