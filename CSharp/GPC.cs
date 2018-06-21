@@ -73,20 +73,13 @@ namespace GridPointCode
             double Longitude = longitude;   //Longitude
 
             /*  Validating Latitude and Longitude values */
-            if (Latitude < -90 || Latitude > 90)
+            if (Latitude <= -90 || Latitude >= 90)
             {
                 throw new ArgumentOutOfRangeException("Latitude", Latitude, "Latitude value must be between -90 to 90.");
             }
-            if (Longitude < -180 || Longitude > 180)
+            if (Longitude <= -180 || Longitude >= 180)
             {
                 throw new ArgumentOutOfRangeException("Longitude", Longitude, "Longitude value must be between -180 to 180.");
-            }
-
-            // IMPORTANT: Checking floating point equality with exact values and not using a range instead.
-            // As no mathematical operations are performed before on Latitude and Longitude.
-            if (Latitude == -90 || Latitude == 90)
-            {
-                Longitude = 0.00;
             }
 
             /*  Getting a Point Number  */
@@ -155,71 +148,42 @@ namespace GridPointCode
             int AssignedLongitude = (signWhole.LongitudeWhole * 2) + (signWhole.LongitudeSign == -1 ? 1 : 0);
             int AssignedLatitude = (signWhole.LatitudeWhole * 2) + (signWhole.LatitudeSign == -1 ? 1 : 0);
 
-            //# of Combinations for that particular sum
+            int MaxSum = 538;
             int Sum = AssignedLongitude + AssignedLatitude;
-            int Difference = AssignedLongitude - AssignedLatitude;
-            bool IsOdd = Sum % 2 != 0;
+            int Combination = 0;
 
-            int ALongitude = 0;
-            int ALatitude = 0;
-            int ACombination = 0;
-
-            if (Sum <= 181)
+            if (Sum <= 179)
             {
-                ALongitude = (IsOdd ? ((Sum - 1) / 2) + 1 : Sum / 2);
-                ALatitude = (IsOdd ? ((Sum - 1) / 2) : Sum / 2);
-
-                for (int x = Sum - 1; x >= 0; x--)
+                for (int xSum = (Sum - 1); xSum >= 0; xSum--)
                 {
-                    ACombination += x + 1;
+                    Combination += xSum + 1;
                 }
 
-                ACombination += (IsOdd ? ((Sum + 1) / 2) + 1 : (Sum / 2) + 1);
+                Combination += AssignedLongitude + 1;
 
             }
-            else if (Sum <= 360)
+            else if (Sum <= 359)
             {
-                ACombination += 16653;
-                ALongitude = Sum - 181;
-                ALatitude = 181;
-                for (int x = Sum - 1; x >= 182; x--)
-                {
-                    ACombination += 182;
-                }
-                ACombination++;
-            }
-            else if (Sum <= 542)
-            {
-                ACombination += 49231;
-                ALongitude = 361;
-                ALatitude = Sum - 361;
-                for (int x = Sum; x >= 361; x--)
-                {
-                    ACombination += (543 - x);
-                }
+                Combination += 16290;
+
+                Combination += (Sum - 180) * 180;
+
+                Combination += 180 - AssignedLatitude;
 
             }
-
-            //Correcting
-            bool BlockOne = ((Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0) || Sum >= 361);
-
-            while (ALongitude != AssignedLongitude)
+            else if (Sum <= 538)
             {
-                if(BlockOne)
+                Combination += 48690;
+
+                for (int xSum = (Sum - 1); xSum >= 360; xSum--)
                 {
-                    ALongitude--;
-                    ALatitude++;
-                    ACombination--;
+                    Combination += MaxSum - xSum + 1;
                 }
-                else
-                {
-                    ALongitude++;
-                    ALatitude--;
-                    ACombination++;
-                }
+
+                Combination += 180 - AssignedLatitude;
             }
 
-            return ACombination;
+            return Combination;
         }
 
         //Encode Point to GPC
@@ -364,85 +328,64 @@ namespace GridPointCode
         }
 
         //Get Whole-Numbers from Combination number
-        static CoordinateSignWhole GetWholesFromCombination(int combinationNumber)
+        static CoordinateSignWhole GetWholesFromCombination(int combination)
         {
-            int CombinationRange = 0;
+            int MaxSum = 538;
+
+            int XSum = 0;
+            int XCombination = 0;
+
             int Sum = 0;
-
-            for (int i = 0; i <= 543; i++)
-            {
-                if (i <= 181)
-                {
-                    CombinationRange += i + 1;
-                }
-                else if (i <= 360)
-                {
-                    CombinationRange += 182;
-                }
-                else if (i <= 542)
-                {
-                    CombinationRange += (543 - i);
-                }
-
-                if (CombinationRange >= combinationNumber)
-                {
-                    Sum = i;
-                    break;
-                }
-            }
+            int MaxCombination = 0;
+            int AssignedLongitude = 0;
+            int AssignedLatitude = 0;
             
-            ////
-            bool IsOdd = Sum % 2 != 0;
-            int ALongitude = 0;
-            int ALatitude = 0;
-            int ACombination = CombinationRange;
-
-            if (Sum <= 181)
+            if (combination <= 16290)
             {
-                ALongitude = (IsOdd ? ((Sum - 1) / 2) + 1 : Sum / 2);
-                ALatitude = (IsOdd ? ((Sum - 1) / 2) : Sum / 2);
-
-                ACombination -= Sum + 1;
-
-                ACombination += (IsOdd ? ((Sum + 1) / 2) + 1 : (Sum / 2) + 1);
-            }
-            else if (Sum <= 360)
-            {
-                ALongitude = Sum - 181;
-                ALatitude = 181;
-
-                ACombination -= 182;
-
-                ACombination++;
-            }
-            else if (Sum <= 542)
-            {
-                ALongitude = 361;
-                ALatitude = Sum - 361;
-            }
-
-            ////=>Correcting
-            int Difference = combinationNumber - ACombination;
-            bool BlockOne = ((Sum > 0 && Sum <= 181 && Math.Sign(Difference) < 0) || (Sum >= 361));
-            while (ACombination != combinationNumber)
-            {
-                if(BlockOne)
+                for (XSum = 0; MaxCombination < combination; XSum++)
                 {
-                    ALongitude--;
-                    ALatitude++;
-                    ACombination--;
+                    MaxCombination += XSum + 1;
                 }
-                else
-                {
-                    ALongitude++;
-                    ALatitude--;
-                    ACombination++;
-                }
-                
+                Sum = XSum - 1;
+                XCombination = MaxCombination - (Sum + 1);
+
+                AssignedLongitude = combination - XCombination - 1;
+                AssignedLatitude = Sum - AssignedLongitude;
+
             }
+            else if (combination <= 48690)
+            {
+                XCombination = 16290;
+                XSum = 179;
+
+                bool IsLast = (combination - XCombination) % 180 == 0;
+                int Pre = ((combination - XCombination) / 180) - (IsLast ? 1 : 0);
+
+                XSum += Pre;
+                XCombination += Pre * 180;
+
+                Sum = XSum + 1;
+                AssignedLatitude = 180 - (combination - XCombination);
+                AssignedLongitude = Sum - AssignedLatitude;
+
+            }
+            else if (combination <= 64800)
+            {
+                XCombination = 48690;
+                XSum = 359;
+                MaxCombination += XCombination;
+                for (XSum = 360; MaxCombination < combination; XSum++)
+                {
+                    MaxCombination += (MaxSum - XSum + 1);
+                }
+                Sum = XSum - 1;
+                XCombination = MaxCombination - (MaxSum - Sum + 1);
+
+                AssignedLatitude = 180 - (combination - XCombination);
+                AssignedLongitude = Sum - AssignedLatitude;
+            }
+
             //
-            int AssignedLongitude = ALongitude;
-            int AssignedLatitude = ALatitude;
             CoordinateSignWhole Result = new CoordinateSignWhole();
             Result.LongitudeSign = (AssignedLongitude % 2 != 0 ? -1 : 1);
             Result.LongitudeWhole = (Result.LongitudeSign == -1 ? (--AssignedLongitude / 2) : (AssignedLongitude / 2));
