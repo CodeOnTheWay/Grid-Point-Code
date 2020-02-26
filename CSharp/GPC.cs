@@ -111,8 +111,8 @@ namespace GridPointCode
             int Power = 9;
             for (int index = 2; index <= 6; index++)
             {
-                Point = Point + (ulong)(Math.Pow(10,Power--) * LongitudeSeven[index]);
-                Point = Point + (ulong)(Math.Pow(10,Power--) * LatitudeSeven[index]);
+                Point += (ulong)(Math.Pow(10,Power--) * LongitudeSeven[index]);
+                Point += (ulong)(Math.Pow(10,Power--) * LatitudeSeven[index]);
             }
             return Point;
         }
