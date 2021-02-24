@@ -15,6 +15,7 @@
 using System;
 using Ninja.Pranav.Algorithms.Kombin;
 
+[assembly: CLSCompliant(true)]
 namespace Ninja.Pranav.Algorithms.GridPointCode {
     /// <summary>
     /// Provides methods to encode coordinates to GPC and
@@ -25,12 +26,11 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         const double MAX_LAT = 90;
         const double MIN_LONG = -180;
         const double MAX_LONG = 180;
-        const ulong MIN_POINT = 10000000000;
-        const ulong MAX_POINT = 648009999999999;
-        const ulong ELEVEN = 205881132094649; // For Uniformity
+        const ulong MAX_POINT = 648_009_999_999_999; // MIN_POINT = 10_000_000_000
+        const ulong ELEVEN = 205_881_132_094_649; // For Uniformity
         const string CHARACTERS = "CDFGHJKLMNPRTVWXY0123456789"; // base27
         const int GPC_LENGTH = 11;
-        static Table LatLongTable = new Table(180, 360, true);
+        static readonly Table LatLongTable = new Table(180, 360, true);
 
         /*  PART 1 : ENCODE */
 
@@ -57,7 +57,8 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
             /*  Validating Latitude and Longitude values */
             (bool valid, string message) = IsValid(latitude, longitude);
             if (!valid) {
-                throw new ArgumentOutOfRangeException($"{message} value out of valid range.");
+                throw new ArgumentOutOfRangeException(paramName: message.ToLowerInvariant(),
+                    message: $"{message}: value out of valid range.");
             }
             /*  Getting a Point Number  */
             ulong Point = GetPoint(latitude, longitude);
@@ -158,20 +159,27 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// if <paramref name="gridPointCode" /> is invalid.
         /// </exception>
         public static (double Latitude, double Longitude) Decode(string gridPointCode) {
+            if (string.IsNullOrEmpty(gridPointCode) || string.IsNullOrWhiteSpace(gridPointCode)) {
+                throw new ArgumentNullException(paramName: nameof(gridPointCode),
+                    message: "GPC_NULL: Invalid GPC.");
+            }
             /*  Removing Format */
-            gridPointCode = gridPointCode.Replace(" ", "").Replace("-", "")
-                .Replace("#", "").Trim().ToUpperInvariant();
+            gridPointCode = gridPointCode.Replace(" ", null, StringComparison.Ordinal)
+                .Replace("-", null, StringComparison.Ordinal)
+                .Replace("#", null, StringComparison.Ordinal).Trim().ToUpperInvariant();
             /*  Validating GPC  */
             (bool valid, string message) = Validate(gridPointCode);
             if(!valid) {
-                throw new ArgumentOutOfRangeException($"{message}: Invalid GPC.");
+                throw new ArgumentOutOfRangeException(paramName: nameof(gridPointCode),
+                    message: $"{message}: Invalid GPC.");
             }
             /*  Getting a Point Number  */
             ulong Point = DecodeToPoint(gridPointCode) - ELEVEN;
             /*  Validate Point  */
             (valid, message) = Validate(Point);
             if (!valid) {
-                throw new ArgumentOutOfRangeException($"{message}: Invalid GPC.");
+                throw new ArgumentOutOfRangeException(paramName: nameof(gridPointCode),
+                    message: $"{message}: Invalid GPC.");
             }
             /* Getting Coordinates from Point  */
             return GetCoordinates(Point);
@@ -185,7 +193,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
                 return (false, "GPC_LENGTH");
             }
             foreach (char character in gridPointCode) {
-                if (!CHARACTERS.Contains(character.ToString())) {
+                if (!CHARACTERS.Contains(character.ToString(), StringComparison.Ordinal)) {
                     return (false, "GPC_CHAR");
                 }
             }
@@ -206,6 +214,9 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <param name="gridPointCode">Grid Point Code</param>
         /// <returns>Validity status with message if any</returns>
         public static (bool status, string message) IsValid (string gridPointCode) {
+            if (string.IsNullOrEmpty(gridPointCode) || string.IsNullOrWhiteSpace(gridPointCode)) {
+                return (false, "GPC_NULL");
+            }
             (bool valid, string message) = Validate(gridPointCode);
             if (!valid) {
                 return (false, message);
@@ -225,7 +236,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
             for (int i = 0; i < GPC_LENGTH; i++) {
                 Point *= 27;
                 char character = gridPointCode[i];
-                Point += (ulong)(CHARACTERS.IndexOf(character));
+                Point += (ulong)(CHARACTERS.IndexOf(character, StringComparison.Ordinal));
             }
             return Point;
         }
@@ -260,12 +271,12 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
             int[] Long7 = new int[7];
             int[] Lat7 = new int[7];
             // TLat, TLong - Assigned positive values in Table
-            (int TLat, int TLong) = ((int,int))LatLongTable.GetElementsAtIndex(latLongIndex - 1);
+            (int TLat, int TLong) = ((int, int))LatLongTable.GetElementsAtIndex(latLongIndex - 1);
             // Getting sign and whole-number parts
-            Lat7[0] = (TLat % 2 != 0 ? -1 : 1);
-            Lat7[1] = (Lat7[0] == -1 ? (--TLat / 2) : (TLat / 2));
-            Long7[0] = (TLong % 2 != 0 ? -1 : 1);
-            Long7[1] = (Long7[0] == -1 ? (--TLong / 2) : (TLong / 2));
+            Lat7[0] = TLat % 2 != 0 ? -1 : 1;
+            Lat7[1] = Lat7[0] == -1 ? --TLat / 2 : TLat / 2;
+            Long7[0] = TLong % 2 != 0 ? -1 : 1;
+            Long7[1] = Long7[0] == -1 ? --TLong / 2 : TLong / 2;
             // Getting fractional parts
             int Power = 9;
             for (int x = 2; x <= 6; x++) {
