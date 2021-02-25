@@ -1,4 +1,5 @@
 # #Grid-Point-Code
+
   -  "Grid Point Code" (GPC) can be used as pin/zip codes to identify any place on earth.
   -  Encodes pinpoint location into 11 alphanumeric characters.
   -  Lossless decoding from GPC to geographic coordinates
