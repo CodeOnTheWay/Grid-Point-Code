@@ -9,55 +9,55 @@ namespace Ninja.Pranav.Algorithms.GridPointCode.Tests {
     public class TestGPC {
 
         [Fact]
-        public void TestMin_Zero() {
+        public void TestMinZero() {
             Assert.Equal("#DCCC-CCCC-CCC", GPC.Encode(0, 0));
             Assert.Equal((0, 0), GPC.Decode("#DCCC-CCCC-CCC"));
         }
 
         [Fact]
-        public void TestMin_1() {
+        public void TestMin1() {
             Assert.Equal("#DCCC-CCCC-CCR", GPC.Encode(0.00001, 0.00001));
             Assert.Equal((0.00001, 0.00001), GPC.Decode("#DCCC-CCCC-CCR"));
         }
 
         [Fact]
-        public void TestMin_2() {
+        public void TestMin2() {
             Assert.Equal("#DCCD-7Y5W-LLH", GPC.Encode(-0.00001, 0.00001));
             Assert.Equal((-0.00001, 0.00001), GPC.Decode("#DCCD-7Y5W-LLH"));
         }
 
         [Fact]
-        public void TestMin_3() {
+        public void TestMin3() {
             Assert.Equal("#DCCC-8473-0G4", GPC.Encode(0.00001, -0.00001));
             Assert.Equal((0.00001, -0.00001), GPC.Decode("#DCCC-8473-0G4"));
         }
 
         [Fact]
-        public void TestMin_4() {
+        public void TestMin4() {
             Assert.Equal("#DCCG-5K1D-WV7", GPC.Encode(-0.00001, -0.00001));
             Assert.Equal((-0.00001, -0.00001), GPC.Decode("#DCCG-5K1D-WV7"));
         }
 
         [Fact]
-        public void TestMax_1() {
+        public void TestMax1() {
             Assert.Equal("#HG9K-PCVH-DPV", GPC.Encode(89.99999, 179.99999));
             Assert.Equal((89.99999, 179.99999), GPC.Decode("#HG9K-PCVH-DPV"));
         }
 
         [Fact]
-        public void TestMax_2() {
+        public void TestMax2() {
             Assert.Equal("#HG9N-KTKR-83Y", GPC.Encode(-89.99999, 179.99999));
             Assert.Equal((-89.99999, 179.99999), GPC.Decode("#HG9N-KTKR-83Y"));
         }
 
         [Fact]
-        public void TestMax_3() {
+        public void TestMax3() {
             Assert.Equal("#HG9M-L0M1-M0K", GPC.Encode(89.99999, -179.99999));
             Assert.Equal((89.99999, -179.99999), GPC.Decode("#HG9M-L0M1-M0K"));
         }
 
         [Fact]
-        public void TestMax_4() {
+        public void TestMax4() {
             Assert.Equal("#HG9P-JLHJ-X69", GPC.Encode(-89.99999, -179.99999));
             Assert.Equal((-89.99999, -179.99999), GPC.Decode("#HG9P-JLHJ-X69"));
         }
@@ -72,10 +72,10 @@ namespace Ninja.Pranav.Algorithms.GridPointCode.Tests {
         [InlineData(-90, -123)]
         [InlineData(90, 123)]
         public void TestLATITUDE(double latitude, double longitude) {
-            Action act = () => GPC.Encode(latitude,longitude);
+            Action act = () => GPC.Encode(latitude, longitude);
             Exception ex = Record.Exception(act);
             Assert.NotNull(ex);
-            Assert.IsType<ArgumentOutOfRangeException>(ex);
+            _ = Assert.IsType<ArgumentOutOfRangeException>(ex);
             Assert.Equal("LATITUDE: value out of valid range. (Parameter 'latitude')", ex.Message);
         }
 
@@ -86,18 +86,18 @@ namespace Ninja.Pranav.Algorithms.GridPointCode.Tests {
             Action act = () => GPC.Encode(latitude, longitude);
             Exception ex = Record.Exception(act);
             Assert.NotNull(ex);
-            Assert.IsType<ArgumentOutOfRangeException>(ex);
+            _ = Assert.IsType<ArgumentOutOfRangeException>(ex);
             Assert.Equal("LONGITUDE: value out of valid range. (Parameter 'longitude')", ex.Message);
         }
 
         [Fact]
-        public void TestGPC_Formatted() {
+        public void TestGPCFormatted() {
             Assert.Equal("#HG9P-JLHJ-X69", GPC.Encode(-89.99999, -179.99999, true));
             Assert.Equal((-89.99999, -179.99999), GPC.Decode("#HG9P-JLHJ-X69"));
         }
 
         [Fact]
-        public void TestGPC_Unformatted() {
+        public void TestGPCUnformatted() {
             Assert.Equal("HG9PJLHJX69", GPC.Encode(-89.99999, -179.99999, false));
             Assert.Equal((-89.99999, -179.99999), GPC.Decode("HG9PJLHJX69"));
         }
@@ -106,45 +106,44 @@ namespace Ninja.Pranav.Algorithms.GridPointCode.Tests {
         [InlineData(null)]
         [InlineData("")]
         [InlineData("    ")]
-        public void TestGPC_NULL(string gridPointCode)
-        {
+        public void TestGPCNull(string gridPointCode) {
             Action act = () => GPC.Decode(gridPointCode);
             Exception ex = Record.Exception(act);
             Assert.NotNull(ex);
-            Assert.IsType<ArgumentNullException>(ex);
+            _ = Assert.IsType<ArgumentNullException>(ex);
             Assert.Equal("GPC_NULL: Invalid GPC. (Parameter 'gridPointCode')", ex.Message);
         }
 
         [Theory]
         [InlineData("#HG9P-JLHJ-X696")]
         [InlineData("#HG9P-JLHJ-X6")]
-        public void TestGPC_LENGTH(string gridPointCode) {
+        public void TestGPCLength(string gridPointCode) {
             Action act = () => GPC.Decode(gridPointCode);
             Exception ex = Record.Exception(act);
             Assert.NotNull(ex);
-            Assert.IsType<ArgumentOutOfRangeException>(ex);
+            _ = Assert.IsType<ArgumentOutOfRangeException>(ex);
             Assert.Equal("GPC_LENGTH: Invalid GPC. (Parameter 'gridPointCode')", ex.Message);
         }
 
         [Theory]
         [InlineData("#HG9P-JLHJ-A69")]
         [InlineData("#HG9P-JLHJ-E69")]
-        public void TestGPC_CHAR(string gridPointCode) {
+        public void TestGPCChar(string gridPointCode) {
             Action act = () => GPC.Decode(gridPointCode);
             Exception ex = Record.Exception(act);
             Assert.NotNull(ex);
-            Assert.IsType<ArgumentOutOfRangeException>(ex);
+            _ = Assert.IsType<ArgumentOutOfRangeException>(ex);
             Assert.Equal("GPC_CHAR: Invalid GPC. (Parameter 'gridPointCode')", ex.Message);
         }
 
         [Theory]
         [InlineData("#HG9P-JLHJ-X7C")]
         [InlineData("#JG9P-JLHJ-X7C")]
-        public void TestGPC_RANGE(string gridPointCode) {
+        public void TestGPCRange(string gridPointCode) {
             Action act = () => GPC.Decode(gridPointCode);
             Exception ex = Record.Exception(act);
             Assert.NotNull(ex);
-            Assert.IsType<ArgumentOutOfRangeException>(ex);
+            _ = Assert.IsType<ArgumentOutOfRangeException>(ex);
             Assert.Equal("GPC_RANGE: Invalid GPC. (Parameter 'gridPointCode')", ex.Message);
         }
 

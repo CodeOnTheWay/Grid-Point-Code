@@ -22,15 +22,15 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
     /// to decode GPC back to coordinates.
     /// </summary>
     public static class GPC {
-        const double MIN_LAT = -90;
-        const double MAX_LAT = 90;
-        const double MIN_LONG = -180;
-        const double MAX_LONG = 180;
-        const ulong MAX_POINT = 648_009_999_999_999; // MIN_POINT = 10_000_000_000
-        const ulong ELEVEN = 205_881_132_094_649; // For Uniformity
-        const string CHARACTERS = "CDFGHJKLMNPRTVWXY0123456789"; // base27
-        const int GPC_LENGTH = 11;
-        static readonly Table LatLongTable = new Table(180, 360, true);
+        private const double MIN_LAT = -90;
+        private const double MAX_LAT = 90;
+        private const double MIN_LONG = -180;
+        private const double MAX_LONG = 180;
+        private const ulong MAX_POINT = 648_009_999_999_999; // MIN_POINT = 10_000_000_000
+        private const ulong ELEVEN = 205_881_132_094_649; // For Uniformity
+        private const string CHARACTERS = "CDFGHJKLMNPRTVWXY0123456789"; // base27
+        private const int GPC_LENGTH = 11;
+        private static readonly Table LatLongTable = new Table(180, 360, true);
 
         /*  PART 1 : ENCODE */
 
@@ -89,13 +89,13 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <param name="latitude">Latitude from Geographic coordinate</param>
         /// <param name="longitude">Longitude from Geographic coordinate</param>
         /// <returns>Point</returns>
-        static ulong GetPoint(double latitude, double longitude) {
+        private static ulong GetPoint(double latitude, double longitude) {
             int[] Lat7 = SplitTo7(latitude);
             int[] Long7 = SplitTo7(longitude);
             // Whole-Number Part
-            ulong Point = (ulong)(Math.Pow(10,10) * 
+            ulong Point = (ulong)(Math.Pow(10, 10) *
                 ((int)LatLongTable.GetIndexOfElements(
-                    (Lat7[1] * 2) + (Lat7[0] == -1 ? 1 : 0), 
+                    (Lat7[1] * 2) + (Lat7[0] == -1 ? 1 : 0),
                     (Long7[1] * 2) + (Long7[0] == -1 ? 1 : 0)
                     ) + 1
                 )
@@ -103,8 +103,8 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
             // Fractional Part
             int Power = 9;
             for (int index = 2; index <= 6; index++) {
-                Point += (ulong)(Math.Pow(10,Power--) * Lat7[index]);
-                Point += (ulong)(Math.Pow(10,Power--) * Long7[index]);
+                Point += (ulong)(Math.Pow(10, Power--) * Lat7[index]);
+                Point += (ulong)(Math.Pow(10, Power--) * Long7[index]);
             }
             return Point;
         }
@@ -112,10 +112,10 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Split Coordinate into 7 parts</summary>
         /// <param name="coordinate">Latitude or Longitude in Decimal Degrees</param>
         /// <returns>Integer array of coordinate</returns>
-        static int[] SplitTo7(double coordinate) {
+        private static int[] SplitTo7(double coordinate) {
             int[] Coord = new int[7];
             // Sign
-            Coord[0] = (coordinate < 0 ? -1 : 1);
+            Coord[0] = coordinate < 0 ? -1 : 1;
             // Whole-Number
             Coord[1] = (int)Math.Truncate(Math.Abs(coordinate));
             // Fractional
@@ -133,7 +133,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Encode Point to GPC</summary>
         /// <param name="point">Point number</param>
         /// <returns>Grid Point Code</returns>
-        static string EncodePoint(ulong point) {
+        private static string EncodePoint(ulong point) {
             string GPC = string.Empty;
             while (point > 0) {
                 GPC = CHARACTERS[(int)(point % 27)] + GPC;
@@ -145,9 +145,9 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Format GPC</summary>
         /// <param name="gridPointCode">Unformatted GPC</param>
         /// <returns>Formatted GPC</returns>
-        static string FormatGPC(string gridPointCode) {
-            return "#" + gridPointCode.Substring(0, 4) + "-" + 
-                gridPointCode.Substring(4, 4) + "-" + gridPointCode.Substring(8, 3);
+        private static string FormatGPC(string gridPointCode) {
+            return "#" + gridPointCode.Substring(0, 4) + "-"
+                + gridPointCode.Substring(4, 4) + "-" + gridPointCode.Substring(8, 3);
         }
 
         /*  PART 2 : DECODE */
@@ -159,7 +159,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// if <paramref name="gridPointCode" /> is invalid.
         /// </exception>
         public static (double Latitude, double Longitude) Decode(string gridPointCode) {
-            if (string.IsNullOrEmpty(gridPointCode) || string.IsNullOrWhiteSpace(gridPointCode)) {
+            if (string.IsNullOrWhiteSpace(gridPointCode)) {
                 throw new ArgumentNullException(paramName: nameof(gridPointCode),
                     message: "GPC_NULL: Invalid GPC.");
             }
@@ -169,7 +169,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
                 .Replace("#", null, StringComparison.Ordinal).Trim().ToUpperInvariant();
             /*  Validating GPC  */
             (bool valid, string message) = Validate(gridPointCode);
-            if(!valid) {
+            if (!valid) {
                 throw new ArgumentOutOfRangeException(paramName: nameof(gridPointCode),
                     message: $"{message}: Invalid GPC.");
             }
@@ -188,7 +188,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Validates GPC</summary>
         /// <param name="gridPointCode">GPC</param>
         /// <returns>Validity status with message if any</returns>
-        static (bool status, string message) Validate (string gridPointCode) {
+        private static (bool status, string message) Validate(string gridPointCode) {
             if (gridPointCode.Length != GPC_LENGTH) {
                 return (false, "GPC_LENGTH");
             }
@@ -203,7 +203,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Validates Point number</summary>
         /// <param name="point">Point number</param>
         /// <returns>Validity status with message if any</returns>
-        static (bool status, string message) Validate (ulong point) {
+        private static (bool status, string message) Validate(ulong point) {
             if (point > MAX_POINT) {
                 return (false, "GPC_RANGE");
             }
@@ -213,8 +213,8 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Check if grid point code is valid</summary>
         /// <param name="gridPointCode">Grid Point Code</param>
         /// <returns>Validity status with message if any</returns>
-        public static (bool status, string message) IsValid (string gridPointCode) {
-            if (string.IsNullOrEmpty(gridPointCode) || string.IsNullOrWhiteSpace(gridPointCode)) {
+        public static (bool status, string message) IsValid(string gridPointCode) {
+            if (string.IsNullOrWhiteSpace(gridPointCode)) {
                 return (false, "GPC_NULL");
             }
             (bool valid, string message) = Validate(gridPointCode);
@@ -222,7 +222,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
                 return (false, message);
             }
             (valid, message) = Validate(DecodeToPoint(gridPointCode) - ELEVEN);
-            if(!valid) {
+            if (valid) {
                 return (false, message);
             }
             return (true, string.Empty);
@@ -231,7 +231,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Decode string to Point</summary>
         /// <param name="gridPointCode">Valid GPC</param>
         /// <returns>Point number</returns>
-        static ulong DecodeToPoint(string gridPointCode) {
+        private static ulong DecodeToPoint(string gridPointCode) {
             ulong Point = 0;
             for (int i = 0; i < GPC_LENGTH; i++) {
                 Point *= 27;
@@ -244,7 +244,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Get a Coordinates from Point</summary>
         /// <param name="point">Valid Point number</param>
         /// <returns>Coordinates in Decimal Degrees</returns>
-        static (double Lat, double Long) GetCoordinates(ulong point) {
+        private static (double Lat, double Long) GetCoordinates(ulong point) {
             // Seperating whole-number and fractional parts
             int LatLongIndex = (int)Math.Truncate((point / Math.Pow(10, 10)));
             ulong Fractional = (ulong)(point - (LatLongIndex * Math.Pow(10, 10)));
@@ -267,7 +267,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <param name="latLongIndex">Latitude and Longitude pair index from Table</param>
         /// <param name="fractional">Fractional part of coordinates</param>
         /// <returns>Integer arrays of coordinates</returns>
-        static (int[] Lat7, int[] Long7) SplitTo7(int latLongIndex, ulong fractional) {
+        private static (int[] Lat7, int[] Long7) SplitTo7(int latLongIndex, ulong fractional) {
             int[] Long7 = new int[7];
             int[] Lat7 = new int[7];
             // TLat, TLong - Assigned positive values in Table
