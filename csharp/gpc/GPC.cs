@@ -155,6 +155,9 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <summary>Decode Grid Point Code to Coordinates</summary>
         /// <param name="gridPointCode">Grid Point Code</param>
         /// <returns>Latitude and Longitude in Decimal Degrees</returns>
+        /// <exception cref="ArgumentNullException">
+        /// if <paramref name="gridPointCode" /> is null, empty or whitespaces.
+        /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// if <paramref name="gridPointCode" /> is invalid.
         /// </exception>
