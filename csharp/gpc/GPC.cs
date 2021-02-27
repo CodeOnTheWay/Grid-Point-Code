@@ -236,7 +236,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
             for (int i = 0; i < GPC_LENGTH; i++) {
                 Point *= 27;
                 char character = gridPointCode[i];
-                Point += (ulong)(CHARACTERS.IndexOf(character, StringComparison.Ordinal));
+                Point += (ulong)CHARACTERS.IndexOf(character, StringComparison.Ordinal);
             }
             return Point;
         }
@@ -246,7 +246,7 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
         /// <returns>Coordinates in Decimal Degrees</returns>
         private static (double Lat, double Long) GetCoordinates(ulong point) {
             // Seperating whole-number and fractional parts
-            int LatLongIndex = (int)Math.Truncate((point / Math.Pow(10, 10)));
+            int LatLongIndex = (int)Math.Truncate(point / Math.Pow(10, 10));
             ulong Fractional = (ulong)(point - (LatLongIndex * Math.Pow(10, 10)));
             // Spliting into 7
             (int[] Lat7, int[] Long7) = SplitTo7(LatLongIndex, Fractional);
@@ -258,8 +258,8 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
                 TempLat += (int)(Lat7[x] * Math.Pow(10, Power));
                 TempLong += (int)(Long7[x] * Math.Pow(10, Power++));
             }
-            double Lat = (TempLat / Math.Pow(10, 5)) * Lat7[0];
-            double Long = (TempLong / Math.Pow(10, 5)) * Long7[0];
+            double Lat = TempLat / Math.Pow(10, 5) * Lat7[0];
+            double Long = TempLong / Math.Pow(10, 5) * Long7[0];
             return (Lat, Long);
         }
 
@@ -280,8 +280,8 @@ namespace Ninja.Pranav.Algorithms.GridPointCode {
             // Getting fractional parts
             int Power = 9;
             for (int x = 2; x <= 6; x++) {
-                Lat7[x] = (int)(((ulong)(Math.Truncate(fractional / Math.Pow(10, Power--)))) % 10);
-                Long7[x] = (int)(((ulong)(Math.Truncate(fractional / Math.Pow(10, Power--)))) % 10);
+                Lat7[x] = (int)(((ulong)Math.Truncate(fractional / Math.Pow(10, Power--))) % 10);
+                Long7[x] = (int)(((ulong)Math.Truncate(fractional / Math.Pow(10, Power--))) % 10);
             }
             return (Lat7, Long7);
         }
