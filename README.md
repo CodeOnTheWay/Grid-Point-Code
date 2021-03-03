@@ -1,5 +1,7 @@
 # #Grid-Point-Code
 
+[![NuGet](https://img.shields.io/nuget/v/Ninja.Pranav.Algorithms.GridPointCode?label=NuGet)](https://www.nuget.org/packages/Ninja.Pranav.Algorithms.GridPointCode)
+
 - "Grid Point Code" (GPC) gives unique global identification to homes, offices and all other places.
 - Encodes pinpoint location into alphanumeric characters.
 - Lossless decoding from GPC to geographic coordinates
