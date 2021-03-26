@@ -11,6 +11,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Unit tests for GPC class
+ *
+ * @author pranav.ninja
+ * @version $Id: $Id
+ * @since 0.0.1
  */
 public class GPCTest {
 
@@ -44,6 +48,13 @@ public class GPCTest {
             assertEquals(latLong, actCoord);
         }
 
+        /**
+         * <p>testLATITUDE.</p>
+         *
+         * @param error a {@link java.lang.String} object.
+         * @param latitude a double.
+         * @param longitude a double.
+         */
         @ParameterizedTest
         @CsvSource({
             "'LATITUDE', -90, -123",
@@ -56,6 +67,9 @@ public class GPCTest {
             assertEquals(error + ": value out of valid range.", ex.getMessage());
         }
 
+        /**
+         * <p>testGPCFormatted.</p>
+         */
         @Test
         public void testGPCFormatted() {
             String gpc = "#HG9P-JLHJ-X69";
@@ -68,6 +82,9 @@ public class GPCTest {
             assertEquals(latLong, actCoord);
         }
 
+        /**
+         * <p>testGPCUnformatted.</p>
+         */
         @Test
         public void testGPCUnformatted() {
             String gpc = "HG9PJLHJX69";
@@ -80,6 +97,11 @@ public class GPCTest {
             assertEquals(latLong, actCoord);
         }
 
+        /**
+         * <p>testGPCBlank.</p>
+         *
+         * @param gridPointCode a {@link java.lang.String} object.
+         */
         @ParameterizedTest
         @NullSource
         @ValueSource(strings = { "", "     " })
@@ -88,6 +110,11 @@ public class GPCTest {
             assertEquals("GPC_NULL: Invalid GPC.", ex.getMessage());
         }
 
+        /**
+         * <p>testGPCLength.</p>
+         *
+         * @param gridPointCode a {@link java.lang.String} object.
+         */
         @ParameterizedTest
         @ValueSource(strings = {"#HG9P-JLHJ-X696", "#HG9P-JLHJ-X6"})
         public void testGPCLength(String gridPointCode) {
@@ -95,6 +122,11 @@ public class GPCTest {
             assertEquals("GPC_LENGTH: Invalid GPC.", ex.getMessage());
         }
 
+        /**
+         * <p>testGPCChar.</p>
+         *
+         * @param gridPointCode a {@link java.lang.String} object.
+         */
         @ParameterizedTest
         @ValueSource(strings = { "#HG9P-JLHJ-A69", "#HG9P-JLHJ-E69"})
         public void testGPCChar(String gridPointCode) {
@@ -102,6 +134,11 @@ public class GPCTest {
             assertEquals("GPC_CHAR: Invalid GPC.", ex.getMessage());
         }
 
+        /**
+         * <p>testGPCRange.</p>
+         *
+         * @param gridPointCode a {@link java.lang.String} object.
+         */
         @ParameterizedTest
         @ValueSource(strings = {"#HG9P-JLHJ-X7C", "#JG9P-JLHJ-X7C"})
         public void testGPCRange(String gridPointCode) {

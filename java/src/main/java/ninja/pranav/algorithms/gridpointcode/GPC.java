@@ -7,6 +7,12 @@ import java.util.Locale;
 import ninja.pranav.algorithms.kombin.Table;
 import ninja.pranav.algorithms.kombin.Pair;
 
+/**
+ * <p>GPC class.</p>
+ *
+ * @author pranav.ninja
+ * @version $Id: $Id
+ */
 public final class GPC {
     private static final double MIN_LAT = -90;
     private static final double MAX_LAT = 90;
@@ -55,10 +61,11 @@ public final class GPC {
 
     /**
      * Encode coordinates
+     *
      * @param latitude Latitude in Decimal Degrees
      * @param longitude Longitude in Decimal Degrees
      * @return Grid Point Code
-     * @throws IllegalArgumentException if {@param latitude} or {@param longitude} is invalid.
+     * @throws java.lang.IllegalArgumentException if latitude or longitude is invalid.
      */
     public static String Encode(double latitude, double longitude) {
         return Encode(latitude, longitude, true);
@@ -66,11 +73,12 @@ public final class GPC {
 
     /**
      * Encode coordinates
+     *
      * @param latitude Latitude in Decimal Degrees
      * @param longitude Longitude in Decimal Degrees
      * @param formatted True if GPC needs to be formatted otherwise false
      * @return Grid Point Code
-     * @throws IllegalArgumentException if {@param latitude} or {@param longitude} is invalid.
+     * @throws java.lang.IllegalArgumentException if latitude or longitude is invalid.
      */
     public static String Encode(double latitude, double longitude, Boolean formatted) {
         /*  Validating Latitude and Longitude values */
@@ -91,9 +99,10 @@ public final class GPC {
 
     /**
      * Check if coordinates are valid
+     *
      * @param latitude Latitude in Decimal Degrees
      * @param longitude Longitude in Decimal Degrees
-     * @return {@link Validation} object containing status and message if any.
+     * @return {@link ninja.pranav.algorithms.gridpointcode.Validation} object containing status and message if any.
      */
     public static Validation IsValid(double latitude, double longitude) {
         if (latitude <= MIN_LAT || latitude >= MAX_LAT) {
@@ -186,9 +195,10 @@ public final class GPC {
 
     /**
      * Decode Grid Point Code to Coordinates
+     *
      * @param gridPointCode Grid Point Code
      * @return Latitude and Longitude in Decimal Degrees
-     * @throws IllegalArgumentException if { @param gridPointCode } is NULL, blank, whitespaces or invalid.
+     * @throws java.lang.IllegalArgumentException if { @param gridPointCode } is NULL, blank, whitespaces or invalid.
      */
     public static Coordinates Decode(String gridPointCode) {
         if (gridPointCode == null || gridPointCode.isBlank()) {
@@ -244,6 +254,7 @@ public final class GPC {
 
     /**
      * Check if grid point code is valid
+     *
      * @param gridPointCode Grid Point Code
      * @return Validity status with message if any
      */
@@ -264,6 +275,7 @@ public final class GPC {
 
     /**
      * Decode string to Point
+     * 
      * @param gridPointCode Valid GPC
      * @return Point number
      */
@@ -279,6 +291,7 @@ public final class GPC {
 
     /**
      * Get a Coordinates from Point
+     * 
      * @param point Valid Point number
      * @return Coordinates in Decimal Degrees
      */
@@ -305,6 +318,7 @@ public final class GPC {
 
     /**
      * Get 7 parts of coordinates
+     * 
      * @param latLongIndex Latitude and Longitude pair index from Table
      * @param fractional Fractional part of coordinates
      * @return Integer arrays of coordinates
