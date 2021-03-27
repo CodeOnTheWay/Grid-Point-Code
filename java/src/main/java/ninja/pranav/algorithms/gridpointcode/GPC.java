@@ -36,27 +36,27 @@ public final class GPC {
      * @param value
      * @return truncated double value
      */
-	private static double Truncate(double value) {
-		if(value < 0) {
-			return Math.ceil(value);
+    private static double Truncate(double value) {
+        if(value < 0) {
+            return Math.ceil(value);
         }
         else {
-			return Math.floor(value);
+            return Math.floor(value);
         }
-	}
+    }
 
     /**
      * 
      */
     private static BigDecimal Truncate(BigDecimal value) {
-		if(value.compareTo(BigDecimal.ZERO) < 0) {
-			return value.setScale(0, RoundingMode.CEILING);
-		}
+        if(value.compareTo(BigDecimal.ZERO) < 0) {
+            return value.setScale(0, RoundingMode.CEILING);
+        }
         else {
-			return value.setScale(0, RoundingMode.FLOOR);
-		}
-	}
-    
+            return value.setScale(0, RoundingMode.FLOOR);
+        }
+    }
+
     /*  PART 1 : ENCODE */
 
     /**
